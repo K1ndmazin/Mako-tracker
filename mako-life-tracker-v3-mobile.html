@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mako's Life Tracker V3 - MOBILE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Black+Ops+One&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Background chaos */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 48%, #ff0000 48%, #ff0000 52%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, #1a0000 48%, #1a0000 52%, transparent 52%);
+            background-size: 100px 100px;
+            opacity: 0.03;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header Section - AGGRESSIVE */
+        .header {
+            background: #000000;
+            padding: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            border: 5px solid #ffffff;
+            clip-path: polygon(0 0, 95% 0, 100% 15%, 100% 100%, 5% 100%, 0 85%);
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 200px;
+            height: 200px;
+            background: #ff0000;
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            z-index: -1;
+            opacity: 0.8;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: -15px;
+            width: 150px;
+            height: 150px;
+            background: #ffffff;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            z-index: -1;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .date-display {
+            font-family: 'Black Ops One', cursive;
+            font-size: 56px;
+            color: #ffffff;
+            text-shadow: 
+                4px 4px 0 #ff0000,
+                8px 8px 0 #000000;
+            transform: skew(-8deg) rotate(-2deg);
+            letter-spacing: 3px;
+        }
+        
+        .day-counter {
+            font-family: 'Bangers', cursive;
+            font-size: 32px;
+            color: #000000;
+            background: #ffffff;
+            padding: 5px 15px;
+            transform: skew(-10deg);
+            text-shadow: 2px 2px 0 #ff0000;
+            border: 3px solid #000000;
+        }
+        
+        .current-arc {
+            font-family: 'Bangers', cursive;
+            font-size: 20px;
+            color: #ff0000;
+            background: #000000;
+            border: 3px solid #ff0000;
+            padding: 10px 20px;
+            max-width: 400px;
+            clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+            text-transform: uppercase;
+        }
+        
+        .player-name {
+            font-family: 'Black Ops One', cursive;
+            font-size: 48px;
+            color: #ffffff;
+            text-shadow: 
+                3px 3px 0 #ff0000,
+                6px 6px 0 #000000;
+            transform: skew(-5deg);
+            letter-spacing: 4px;
+        }
+        
+        /* Main Grid - OVERLAPPING CHAOS */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        /* Panel Styling - AGGRESSIVE ANGLES */
+        .panel {
+            background: #1a1a1a;
+            border: 5px solid #ffffff;
+            padding: 30px;
+            position: relative;
+            clip-path: polygon(0 5%, 5% 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
+            box-shadow: 
+                10px 10px 0 rgba(255, 0, 0, 0.3),
+                -5px -5px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: #ff0000;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+        
+        .panel-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 36px;
+            color: #ffffff;
+            background: #ff0000;
+            text-shadow: 3px 3px 0 #000000;
+            margin: -30px -30px 25px -30px;
+            padding: 15px 30px;
+            transform: skew(-8deg);
+            clip-path: polygon(0 0, 98% 0, 100% 50%, 98% 100%, 0 100%);
+            letter-spacing: 2px;
+            border-bottom: 5px solid #000000;
+        }
+        
+        /* Stats Container - PENTAGRAM LAYOUT */
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .stat-item {
+            width: 100%;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .stat-label {
+            font-family: 'Bangers', cursive;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #ff0000;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transform: skew(-5deg);
+        }
+        
+        .stat-level {
+            color: #ffffff;
+            background: #ff0000;
+            padding: 2px 10px;
+            font-size: 20px;
+            border: 2px solid #000000;
+        }
+        
+        .stat-bar {
+            width: 100%;
+            height: 30px;
+            background: #000000;
+            border: 4px solid #ffffff;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
+        }
+        
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000 0%, #ff4444 50%, #ffffff 100%);
+            transition: width 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        
+        .stat-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        /* SP Bar - EXPLOSIVE */
+        .sp-container {
+            margin-top: 25px;
+            position: relative;
+        }
+        
+        .sp-container::before {
+            content: '⚡';
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 40px;
+            color: #00ffff;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+        }
+        
+        .sp-label {
+            font-family: 'Black Ops One', cursive;
+            font-size: 28px;
+            color: #00ffff;
+            text-shadow: 3px 3px 0 #000000;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            transform: skew(-5deg);
+        }
+        
+        .sp-bar {
+            width: 100%;
+            height: 50px;
+            background: #000000;
+            border: 5px solid #00ffff;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 98% 0, 100% 50%, 98% 100%, 0 100%);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.5),
+                inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+        
+        .sp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff 0%, #0099ff 50%, #0066ff 100%);
+            transition: width 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            position: relative;
+        }
+        
+        .sp-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+        }
+        
+        /* Task Section - CHAOTIC */
+        .task-input {
+            width: 100%;
+            background: #000000;
+            border: 3px solid #ff0000;
+            color: #ffffff;
+            padding: 15px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-family: 'Arial', sans-serif;
+            clip-path: polygon(0 0, 98% 0, 100% 100%, 2% 100%);
+        }
+        
+        .task-input:focus {
+            outline: none;
+            border-color: #ffff00;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: #ffffff;
+            border: 3px solid #000000;
+            padding: 15px 30px;
+            font-family: 'Bangers', cursive;
+            font-size: 20px;
+            cursor: pointer;
+            clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+            transition: all 0.3s;
+            margin: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .button::before {
+            content: '►';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+        
+        .button:hover {
+            background: linear-gradient(135deg, #ffffff 0%, #ff0000 100%);
+            color: #000000;
+            transform: translateY(-3px) skew(-2deg);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.7);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .button-small {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        
+        .task-list {
+            margin-top: 25px;
+        }
+        
+        .task-item {
+            background: #000000;
+            border-left: 8px solid #ff0000;
+            border-right: 2px solid #ffffff;
+            padding: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            clip-path: polygon(0 0, 98% 0, 100% 50%, 98% 100%, 0 100%);
+            box-shadow: 5px 5px 0 rgba(255, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .task-item:hover {
+            transform: translateX(5px);
+            border-left-width: 12px;
+        }
+        
+        .task-item.completed {
+            opacity: 0.7;
+            border-left-color: #00ff00;
+            background: #001a00;
+        }
+        
+        .task-item.completed::after {
+            content: '✓';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            color: #00ff00;
+            text-shadow: 2px 2px 0 #000000;
+        }
+        
+        .task-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .task-sp {
+            color: #00ffff;
+            font-weight: bold;
+            margin: 0 20px;
+            font-size: 18px;
+            text-shadow: 1px 1px 0 #000000;
+        }
+        
+        /* Confidants - TAROT CARDS */
+        .confidants-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .confidant-card {
+            background: #000000;
+            border: 4px solid #ffffff;
+            padding: 20px;
+            clip-path: polygon(5% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+            transition: all 0.4s;
+            position: relative;
+            box-shadow: 8px 8px 0 rgba(255, 0, 0, 0.3);
+        }
+        
+        .confidant-card::before {
+            content: '🃏';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 30px;
+            opacity: 0.3;
+        }
+        
+        .confidant-card:hover {
+            border-color: #ff0000;
+            transform: translateY(-8px) rotate(2deg);
+            box-shadow: 
+                12px 12px 0 rgba(255, 0, 0, 0.5),
+                0 0 30px rgba(255, 0, 0, 0.3);
+        }
+        
+        .confidant-name {
+            font-family: 'Bangers', cursive;
+            font-size: 22px;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #ff0000;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            transform: skew(-3deg);
+        }
+        
+        .confidant-rank {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .rank-star {
+            color: #333;
+            font-size: 24px;
+            transition: all 0.3s;
+            filter: drop-shadow(0 0 2px #000);
+        }
+        
+        .rank-star.filled {
+            color: #ffffff;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            animation: star-glow 2s infinite;
+        }
+        
+        @keyframes star-glow {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.2); filter: brightness(1.5); }
+        }
+        
+        .confidant-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Recovery Section */
+        .recovery-item {
+            background: #000000;
+            border-left: 6px solid #00ff00;
+            border-right: 2px solid #ffffff;
+            padding: 15px;
+            margin-bottom: 12px;
+            clip-path: polygon(0 0, 97% 0, 100% 100%, 3% 100%);
+        }
+        
+        .recovery-text {
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+        
+        .recovery-sp {
+            color: #00ff00;
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 1px 1px 0 #000000;
+        }
+        
+        /* History */
+        .history-item {
+            background: #1a1a1a;
+            border: 3px solid #666;
+            padding: 20px;
+            margin-bottom: 15px;
+            clip-path: polygon(0 5%, 2% 0, 100% 0, 100% 95%, 98% 100%, 0 100%);
+            position: relative;
+        }
+        
+        .history-date {
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-family: 'Bangers', cursive;
+            font-size: 20px;
+            text-shadow: 2px 2px 0 #ff0000;
+        }
+        
+        /* Calendar - AGGRESSIVE GRID */
+        .calendar-day {
+            background: #000000;
+            border: 3px solid #ffffff;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            position: relative;
+        }
+        
+        .calendar-day::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ff0000;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+        
+        .calendar-day:hover {
+            border-color: #ff0000;
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            z-index: 10;
+        }
+        
+        .calendar-day.current {
+            border-color: #ffffff;
+            background: #1a0000;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+        
+        .calendar-day.completed {
+            border-color: #00ff00;
+            background: #001a00;
+        }
+        
+        .calendar-day-number {
+            font-size: 24px;
+            color: #ffffff;
+            font-weight: bold;
+            font-family: 'Black Ops One', cursive;
+            text-shadow: 2px 2px 0 #ff0000;
+        }
+        
+        .calendar-day-info {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        /* Arcs - DEADLINE PRESSURE */
+        .arc-item {
+            background: #000000;
+            border-left: 10px solid #ff0000;
+            border-right: 3px solid #ffffff;
+            padding: 18px;
+            margin-bottom: 15px;
+            clip-path: polygon(0 0, 95% 0, 100% 100%, 5% 100%);
+            position: relative;
+        }
+        
+        .arc-item::after {
+            content: '⚠';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            color: #ff0000;
+            opacity: 0.3;
+        }
+        
+        .arc-item.completed {
+            border-left-color: #00ff00;
+            opacity: 0.8;
+        }
+        
+        .arc-item.completed::after {
+            content: '✓';
+            color: #00ff00;
+        }
+        
+        .arc-title {
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-size: 20px;
+            font-family: 'Bangers', cursive;
+            text-shadow: 2px 2px 0 #ff0000;
+        }
+        
+        .arc-deadline {
+            color: #ff0000;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #000000;
+        }
+        
+        /* Progression graphs */
+        .stat-graph {
+            margin-bottom: 25px;
+        }
+        
+        .graph-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .graph-label {
+            width: 150px;
+            color: #ffffff;
+            font-family: 'Bangers', cursive;
+            font-size: 20px;
+            text-shadow: 2px 2px 0 #ff0000;
+        }
+        
+        .graph-line {
+            flex: 1;
+            height: 30px;
+            background: #000000;
+            border: 3px solid #ffffff;
+            position: relative;
+            clip-path: polygon(0 0, 98% 0, 100% 50%, 98% 100%, 0 100%);
+        }
+        
+        .graph-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff4444, #ffffff);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        
+        /* Full Width Sections */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        select {
+            background: #000000;
+            border: 3px solid #ff0000;
+            color: #ffffff;
+            padding: 10px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        input[type="number"] {
+            background: #000000;
+            border: 3px solid #ff0000;
+            color: #ffffff;
+            padding: 10px;
+            width: 100px;
+            font-size: 15px;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        textarea {
+            font-family: 'Arial', sans-serif;
+        }
+        
+        h3 {
+            font-family: 'Bangers', cursive;
+            transform: skew(-5deg);
+            text-shadow: 2px 2px 0 #000000;
+        }
+        
+        /* Motion lines decoration */
+        .panel::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 100px;
+            height: 3px;
+            background: repeating-linear-gradient(
+                90deg,
+                #ff0000 0px,
+                #ff0000 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            transform: skew(-45deg);
+            opacity: 0.5;
+        }
+        
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            /* Header adjustments */
+            .header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .header::before,
+            .header::after {
+                display: none; /* Remove decorative shapes on mobile */
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .date-display {
+                font-size: 32px;
+                text-shadow: 2px 2px 0 #ff0000, 4px 4px 0 #000000;
+            }
+            
+            .day-counter {
+                font-size: 20px;
+                padding: 5px 10px;
+            }
+            
+            .current-arc {
+                font-size: 14px;
+                max-width: 100%;
+                padding: 8px 15px;
+            }
+            
+            .player-name {
+                font-size: 28px;
+                text-shadow: 2px 2px 0 #ff0000, 4px 4px 0 #000000;
+            }
+            
+            /* Single column layout */
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            
+            /* Panel adjustments */
+            .panel {
+                padding: 20px 15px;
+                border-width: 3px;
+            }
+            
+            .panel::before {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .panel::after {
+                width: 60px;
+            }
+            
+            .panel-title {
+                font-size: 24px;
+                margin: -20px -15px 20px -15px;
+                padding: 12px 15px;
+                letter-spacing: 1px;
+            }
+            
+            /* Stats */
+            .stat-label {
+                font-size: 18px;
+            }
+            
+            .stat-level {
+                font-size: 16px;
+                padding: 2px 8px;
+            }
+            
+            .stat-bar {
+                height: 25px;
+                border-width: 3px;
+            }
+            
+            /* SP Bar */
+            .sp-container::before {
+                font-size: 30px;
+                top: -10px;
+                right: -10px;
+            }
+            
+            .sp-label {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+            
+            .sp-bar {
+                height: 40px;
+                border-width: 4px;
+            }
+            
+            /* Tasks */
+            .task-input {
+                padding: 12px;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+            
+            .button {
+                padding: 12px 20px;
+                font-size: 16px;
+                margin: 3px;
+                letter-spacing: 1px;
+            }
+            
+            .button-small {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+            
+            .button::before {
+                font-size: 12px;
+                left: 8px;
+            }
+            
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+                border-left-width: 6px;
+            }
+            
+            .task-text {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+            
+            .task-sp {
+                margin: 5px 0;
+                font-size: 16px;
+            }
+            
+            .task-item .button-small {
+                margin-top: 5px;
+            }
+            
+            /* Confidants - 2 column on mobile */
+            .confidants-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .confidant-card {
+                padding: 15px;
+                border-width: 3px;
+            }
+            
+            .confidant-card::before {
+                font-size: 20px;
+                top: 5px;
+                right: 5px;
+            }
+            
+            .confidant-name {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+            
+            .rank-star {
+                font-size: 18px;
+            }
+            
+            .confidant-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .confidant-buttons .button-small {
+                width: 100%;
+            }
+            
+            /* Calendar - 4 columns on mobile */
+            #calendar-grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px;
+            }
+            
+            .calendar-day {
+                min-height: 60px;
+                padding: 8px;
+                border-width: 2px;
+            }
+            
+            .calendar-day::before {
+                width: 15px;
+                height: 15px;
+            }
+            
+            .calendar-day-number {
+                font-size: 16px;
+            }
+            
+            .calendar-day-info {
+                font-size: 9px;
+            }
+            
+            /* Arcs */
+            .arc-item {
+                padding: 15px;
+                border-left-width: 6px;
+            }
+            
+            .arc-item::after {
+                font-size: 30px;
+                right: 10px;
+            }
+            
+            .arc-title {
+                font-size: 16px;
+            }
+            
+            .arc-deadline {
+                font-size: 13px;
+            }
+            
+            /* History */
+            .history-item {
+                padding: 15px;
+                border-width: 2px;
+            }
+            
+            .history-date {
+                font-size: 16px;
+            }
+            
+            /* Progression graphs */
+            .graph-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 20px;
+            }
+            
+            .graph-label {
+                width: 100%;
+                margin-bottom: 5px;
+                font-size: 16px;
+            }
+            
+            .graph-line {
+                width: 100%;
+                height: 25px;
+            }
+            
+            /* Form inputs */
+            select {
+                padding: 8px;
+                font-size: 14px;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            
+            input[type="number"] {
+                padding: 8px;
+                font-size: 14px;
+                width: 80px;
+            }
+            
+            textarea {
+                font-size: 14px;
+            }
+            
+            h3 {
+                font-size: 18px;
+            }
+            
+            /* Recovery */
+            .recovery-item {
+                padding: 12px;
+                border-left-width: 4px;
+            }
+            
+            .recovery-text {
+                font-size: 13px;
+            }
+            
+            .recovery-sp {
+                font-size: 16px;
+            }
+            
+            /* Stat graphs in progression */
+            .stat-graph {
+                margin-bottom: 20px;
+            }
+            
+            /* Calendar & Arcs split layout */
+            .panel.full-width > div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: 20px;
+            }
+        }
+        
+        /* Extra small phones */
+        @media (max-width: 400px) {
+            .date-display {
+                font-size: 24px;
+            }
+            
+            .player-name {
+                font-size: 20px;
+            }
+            
+            .panel-title {
+                font-size: 20px;
+            }
+            
+            .confidants-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #calendar-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <div class="date-display" id="currentDate"></div>
+                    <div class="day-counter" id="dayCounter">Day 1</div>
+                </div>
+                <div class="current-arc" id="currentArc">No active arc</div>
+                <div class="player-name">MAKO</div>
+            </div>
+        </div>
+        
+        <div class="main-grid">
+            <!-- Stats Panel -->
+            <div class="panel">
+                <div class="panel-title">STATS</div>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span>Knowledge</span>
+                            <span class="stat-level" id="knowledge-level">Lv 1</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="knowledge-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span>Guts</span>
+                            <span class="stat-level" id="guts-level">Lv 1</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="guts-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span>Proficiency</span>
+                            <span class="stat-level" id="proficiency-level">Lv 1</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="proficiency-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span>Kindness</span>
+                            <span class="stat-level" id="kindness-level">Lv 1</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="kindness-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span>Charm</span>
+                            <span class="stat-level" id="charm-level">Lv 1</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="charm-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sp-container">
+                    <div class="sp-label">
+                        <span>SP (Stamina Points)</span>
+                        <span id="sp-display">100 / 100</span>
+                    </div>
+                    <div class="sp-bar">
+                        <div class="sp-fill" id="sp-fill" style="width: 100%"></div>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+                        <button class="button button-small" onclick="adjustMaxSP()">Set Max SP</button>
+                        <button class="button button-small" onclick="resetSP()">Full Recovery</button>
+                        <button class="button button-small" onclick="manualSPAdjust()">Adjust SP</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tasks Panel -->
+            <div class="panel">
+                <div class="panel-title">TODAY'S TASKS</div>
+                
+                <h3 style="color: #ff0000; margin: 15px 0 10px 0;">Main Task (Palace)</h3>
+                <input type="text" class="task-input" id="main-task-input" placeholder="Enter main SharkFin task...">
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 10px;">
+                    <div>
+                        <label style="color: #ffff00; font-size: 11px;">Knowledge</label>
+                        <input type="number" id="main-knowledge" min="0" max="5" value="0" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="color: #ffff00; font-size: 11px;">Guts</label>
+                        <input type="number" id="main-guts" min="0" max="5" value="0" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="color: #ffff00; font-size: 11px;">Proficiency</label>
+                        <input type="number" id="main-proficiency" min="0" max="5" value="3" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="color: #ffff00; font-size: 11px;">Kindness</label>
+                        <input type="number" id="main-kindness" min="0" max="5" value="0" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="color: #ffff00; font-size: 11px;">Charm</label>
+                        <input type="number" id="main-charm" min="0" max="5" value="0" style="width: 100%;">
+                    </div>
+                </div>
+                <input type="number" id="main-task-sp" placeholder="SP Cost" min="1" max="100" value="35" style="width: 100%;">
+                <button class="button button-small" onclick="addTask('main')">Add Main Task</button>
+                <div class="task-list" id="main-task-list"></div>
+                
+                <h3 style="color: #ffff00; margin: 20px 0 10px 0;">Sub Tasks</h3>
+                <input type="text" class="task-input" id="sub-task-input" placeholder="Enter sub task...">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label style="color: #ffff00; font-size: 12px;">Stat Boost</label>
+                        <select id="sub-task-stat" style="width: 100%;">
+                            <option value="knowledge">Knowledge</option>
+                            <option value="guts">Guts</option>
+                            <option value="proficiency">Proficiency</option>
+                            <option value="kindness">Kindness</option>
+                            <option value="charm">Charm</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color: #ffff00; font-size: 12px;">Points (1-5)</label>
+                        <input type="number" id="sub-task-points" placeholder="Stat Points" min="1" max="5" value="1" style="width: 100%;">
+                    </div>
+                </div>
+                <input type="number" id="sub-task-sp" placeholder="SP Cost" min="1" max="100" value="15" style="width: 100%;">
+                <button class="button button-small" onclick="addTask('sub')">Add Sub Task</button>
+                <div class="task-list" id="sub-task-list"></div>
+            </div>
+            
+            <!-- Confidants Panel -->
+            <div class="panel full-width">
+                <div class="panel-title">CONFIDANTS</div>
+                <div class="confidants-grid" id="confidants-grid"></div>
+            </div>
+            
+            <!-- Recovery Panel -->
+            <div class="panel">
+                <div class="panel-title">RECOVERY</div>
+                <input type="text" class="task-input" id="recovery-input" placeholder="What recovered your SP?">
+                <input type="number" id="recovery-sp" placeholder="SP Gained" min="1" max="100" value="10">
+                <button class="button button-small" onclick="addRecovery()">Add Recovery</button>
+                <div id="recovery-list"></div>
+            </div>
+            
+            <!-- Notes Panel -->
+            <div class="panel">
+                <div class="panel-title">DAILY NOTES</div>
+                <textarea class="task-input" id="daily-notes" placeholder="Reflect on today..." style="height: 150px; resize: vertical;"></textarea>
+                <button class="button button-small" onclick="saveNotes()">Save Notes</button>
+            </div>
+        </div>
+        
+        <div class="panel full-width">
+            <div class="panel-title">CALENDAR & ARCS</div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                <div>
+                    <h3 style="color: #ffff00; margin-bottom: 10px;">Calendar (Last 30 Days)</h3>
+                    <div id="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;"></div>
+                </div>
+                <div>
+                    <h3 style="color: #ffff00; margin-bottom: 10px;">Active Arcs</h3>
+                    <button class="button button-small" onclick="addArc()">New Arc/Goal</button>
+                    <div id="arcs-list" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel full-width">
+            <div class="panel-title">PROGRESSION</div>
+            <button class="button" onclick="viewStatsGraph()">Stats Over Time</button>
+            <button class="button" onclick="viewConfidantTimeline()">Confidant Timeline</button>
+            <button class="button" onclick="viewMilestones()">Milestones</button>
+            <div id="progression-display" style="margin-top: 20px;"></div>
+        </div>
+        
+        <div class="panel full-width">
+            <div class="panel-title">HISTORY</div>
+            <button class="button" onclick="saveAndAdvanceDay()">SAVE & ADVANCE DAY</button>
+            <button class="button" onclick="resetDay()">RESET TODAY</button>
+            <button class="button" onclick="viewHistory()">VIEW HISTORY</button>
+            <div id="history-display" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Data Structure
+        let gameData = {
+            startDate: null, // When tracking started
+            currentDay: 1, // Day counter
+            currentDate: new Date().toISOString().split('T')[0], // Current date
+            currentSP: 100,
+            maxSP: 100,
+            stats: {
+                knowledge: { level: 1, progress: 0 },
+                guts: { level: 1, progress: 0 },
+                proficiency: { level: 1, progress: 0 },
+                kindness: { level: 1, progress: 0 },
+                charm: { level: 1, progress: 0 }
+            },
+            confidants: {
+                'Future Therapist': { rank: 0, progress: 0 },
+                'SharkFin Dev': { rank: 0, progress: 0 },
+                'SharkFin Artist': { rank: 0, progress: 0 },
+                'Mom': { rank: 0, progress: 0 },
+                'Dad': { rank: 0, progress: 0 },
+                'Step Dad': { rank: 0, progress: 0 },
+                'Siblings': { rank: 0, progress: 0 }
+            },
+            todaysTasks: {
+                main: [],
+                sub: []
+            },
+            recovery: [],
+            notes: '',
+            arcs: [], // Goals/deadlines
+            history: [], // Daily snapshots
+            milestones: [] // Major moments
+        };
+        
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('makoLifeTracker');
+            if (saved) {
+                gameData = JSON.parse(saved);
+            }
+            
+            // Initialize start date if not set
+            if (!gameData.startDate) {
+                gameData.startDate = new Date().toISOString().split('T')[0];
+                gameData.currentDate = gameData.startDate;
+                gameData.currentDay = 1;
+            }
+            
+            updateDisplay();
+            renderCalendar();
+            renderArcs();
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('makoLifeTracker', JSON.stringify(gameData));
+        }
+        
+        // Update all displays
+        function updateDisplay() {
+            updateDate();
+            updateDayCounter();
+            updateCurrentArc();
+            updateStats();
+            updateSP();
+            updateConfidants();
+            renderTasks();
+            renderRecovery();
+            document.getElementById('daily-notes').value = gameData.notes;
+        }
+        
+        // Update day counter
+        function updateDayCounter() {
+            document.getElementById('dayCounter').textContent = `Day ${gameData.currentDay}`;
+        }
+        
+        // Update current arc display
+        function updateCurrentArc() {
+            const activeArcs = gameData.arcs ? gameData.arcs.filter(arc => !arc.completed) : [];
+            
+            if (activeArcs.length === 0) {
+                document.getElementById('currentArc').textContent = 'No active arc';
+            } else {
+                const nearestArc = activeArcs.sort((a, b) => a.deadline - b.deadline)[0];
+                const daysLeft = nearestArc.deadline - gameData.currentDay;
+                document.getElementById('currentArc').textContent = `${nearestArc.title} (${daysLeft} days left)`;
+            }
+        }
+        
+        // Update date display
+        function updateDate() {
+            const now = new Date();
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+            
+            const dateStr = `${months[now.getMonth()]}/${now.getDate()} ${days[now.getDay()]}`;
+            document.getElementById('currentDate').textContent = dateStr;
+        }
+        
+        // Update stats display
+        function updateStats() {
+            const statNames = ['knowledge', 'guts', 'proficiency', 'kindness', 'charm'];
+            statNames.forEach(stat => {
+                const data = gameData.stats[stat];
+                const level = data.level;
+                const progress = data.progress;
+                const percentage = Math.min(100, (progress / (level * 10)) * 100);
+                
+                document.getElementById(`${stat}-level`).textContent = `Lv ${level}`;
+                document.getElementById(`${stat}-bar`).style.width = `${percentage}%`;
+            });
+        }
+        
+        // Update SP display
+        function updateSP() {
+            const percentage = (gameData.currentSP / gameData.maxSP) * 100;
+            document.getElementById('sp-fill').style.width = `${percentage}%`;
+            document.getElementById('sp-display').textContent = `${gameData.currentSP} / ${gameData.maxSP}`;
+        }
+        
+        // Increase stat
+        function increaseStat(stat, amount = 1) {
+            gameData.stats[stat].progress += amount;
+            const requiredProgress = gameData.stats[stat].level * 10; // Each level needs 10 points per level
+            
+            if (gameData.stats[stat].progress >= requiredProgress) {
+                gameData.stats[stat].level++;
+                gameData.stats[stat].progress -= requiredProgress; // Carry over excess progress
+                alert(`${stat.toUpperCase()} RANK UP! Now Level ${gameData.stats[stat].level}`);
+            }
+            
+            updateStats();
+            saveData();
+        }
+        
+        // Modify SP
+        function modifySP(amount) {
+            gameData.currentSP = Math.max(0, Math.min(gameData.maxSP, gameData.currentSP + amount));
+            updateSP();
+            saveData();
+        }
+        
+        // Adjust max SP (for depression tax days)
+        function adjustMaxSP() {
+            const newMax = prompt(`Set maximum SP (default 100):\n\nDepression tax day? Try 70-80\nGood day? 100\nGreat day? 110-120`, gameData.maxSP);
+            
+            if (newMax === null) return;
+            
+            const maxSP = parseInt(newMax) || 100;
+            gameData.maxSP = Math.max(50, Math.min(150, maxSP));
+            gameData.currentSP = Math.min(gameData.currentSP, gameData.maxSP);
+            
+            updateSP();
+            saveData();
+        }
+        
+        // Reset SP to max
+        function resetSP() {
+            gameData.currentSP = gameData.maxSP;
+            updateSP();
+            saveData();
+        }
+        
+        // Manual SP adjustment
+        function manualSPAdjust() {
+            const adjustment = prompt(`Adjust SP by how much?\n\nPositive to add, negative to subtract`, '0');
+            
+            if (adjustment === null) return;
+            
+            modifySP(parseInt(adjustment) || 0);
+        }
+        
+        // Add task
+        function addTask(type) {
+            const inputId = type === 'main' ? 'main-task-input' : 'sub-task-input';
+            const spInputId = type === 'main' ? 'main-task-sp' : 'sub-task-sp';
+            
+            const taskText = document.getElementById(inputId).value.trim();
+            const spCost = parseInt(document.getElementById(spInputId).value) || 0;
+            
+            if (!taskText) return;
+            
+            const task = {
+                text: taskText,
+                sp: spCost,
+                completed: false
+            };
+            
+            if (type === 'main') {
+                // Get all stat points for main task
+                task.statGains = {
+                    knowledge: parseInt(document.getElementById('main-knowledge').value) || 0,
+                    guts: parseInt(document.getElementById('main-guts').value) || 0,
+                    proficiency: parseInt(document.getElementById('main-proficiency').value) || 0,
+                    kindness: parseInt(document.getElementById('main-kindness').value) || 0,
+                    charm: parseInt(document.getElementById('main-charm').value) || 0
+                };
+            } else {
+                // Get single stat and points for sub task
+                task.stat = document.getElementById('sub-task-stat').value;
+                task.points = parseInt(document.getElementById('sub-task-points').value) || 1;
+            }
+            
+            gameData.todaysTasks[type].push(task);
+            document.getElementById(inputId).value = '';
+            
+            // Reset main task stat inputs to defaults
+            if (type === 'main') {
+                document.getElementById('main-knowledge').value = 0;
+                document.getElementById('main-guts').value = 0;
+                document.getElementById('main-proficiency').value = 3;
+                document.getElementById('main-kindness').value = 0;
+                document.getElementById('main-charm').value = 0;
+            }
+            
+            renderTasks();
+            saveData();
+        }
+        
+        // Complete task
+        function completeTask(type, index) {
+            const task = gameData.todaysTasks[type][index];
+            if (task.completed) return;
+            
+            task.completed = true;
+            modifySP(-task.sp);
+            
+            if (type === 'main' && task.statGains) {
+                // Apply all stat gains from main task
+                Object.keys(task.statGains).forEach(stat => {
+                    if (task.statGains[stat] > 0) {
+                        increaseStat(stat, task.statGains[stat]);
+                    }
+                });
+            } else if (type === 'sub' && task.stat && task.points) {
+                // Apply single stat gain from sub task
+                increaseStat(task.stat, task.points);
+            }
+            
+            renderTasks();
+            saveData();
+        }
+        
+        // Delete task
+        function deleteTask(type, index) {
+            gameData.todaysTasks[type].splice(index, 1);
+            renderTasks();
+            saveData();
+        }
+        
+        // Render tasks
+        function renderTasks() {
+            ['main', 'sub'].forEach(type => {
+                const listId = `${type}-task-list`;
+                const list = document.getElementById(listId);
+                list.innerHTML = '';
+                
+                gameData.todaysTasks[type].forEach((task, index) => {
+                    const div = document.createElement('div');
+                    div.className = `task-item ${task.completed ? 'completed' : ''}`;
+                    div.innerHTML = `
+                        <div class="task-text">${task.text}</div>
+                        <div class="task-sp">-${task.sp} SP</div>
+                        ${!task.completed ? 
+                            `<button class="button button-small" onclick="completeTask('${type}', ${index})">Complete</button>` : 
+                            '<span style="color: #00ff00;">✓ Done</span>'
+                        }
+                        <button class="button button-small" onclick="deleteTask('${type}', ${index})">✕</button>
+                    `;
+                    list.appendChild(div);
+                });
+            });
+        }
+        
+        // Add recovery
+        function addRecovery() {
+            const text = document.getElementById('recovery-input').value.trim();
+            const sp = parseInt(document.getElementById('recovery-sp').value) || 0;
+            
+            if (!text) return;
+            
+            gameData.recovery.push({ text, sp });
+            modifySP(sp);
+            
+            document.getElementById('recovery-input').value = '';
+            renderRecovery();
+            saveData();
+        }
+        
+        // Render recovery
+        function renderRecovery() {
+            const list = document.getElementById('recovery-list');
+            list.innerHTML = '';
+            
+            gameData.recovery.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'recovery-item';
+                div.innerHTML = `
+                    <div class="recovery-text">${item.text}</div>
+                    <div class="recovery-sp">+${item.sp} SP</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+        
+        // Update confidants display
+        function updateConfidants() {
+            const grid = document.getElementById('confidants-grid');
+            grid.innerHTML = '';
+            
+            Object.keys(gameData.confidants).forEach(name => {
+                const rank = gameData.confidants[name].rank;
+                const card = document.createElement('div');
+                card.className = 'confidant-card';
+                
+                let stars = '';
+                for (let i = 1; i <= 10; i++) {
+                    stars += `<span class="rank-star ${i <= rank ? 'filled' : ''}">★</span>`;
+                }
+                
+                card.innerHTML = `
+                    <div class="confidant-name">${name}</div>
+                    <div class="confidant-rank">${stars}</div>
+                    <div style="color: #aaa; font-size: 12px; margin: 5px 0;">
+                        Progress: ${gameData.confidants[name].progress || 0} / 10
+                    </div>
+                    <div class="confidant-buttons">
+                        <button class="button button-small" onclick="addConfidantProgress('${name}')">Interact</button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // Add confidant progress
+        function addConfidantProgress(name) {
+            const points = prompt(`How many progress points for ${name}?\n\nQuick chat: 1-2\nGood conversation: 3-5\nMajor moment: 6-10`, '3');
+            
+            if (points === null) return;
+            
+            const progressPoints = parseInt(points) || 0;
+            if (progressPoints <= 0) return;
+            
+            if (!gameData.confidants[name].progress) {
+                gameData.confidants[name].progress = 0;
+            }
+            
+            gameData.confidants[name].progress += progressPoints;
+            
+            // Check for rank up
+            if (gameData.confidants[name].progress >= 10 && gameData.confidants[name].rank < 10) {
+                gameData.confidants[name].rank++;
+                gameData.confidants[name].progress -= 10; // Carry over excess
+                alert(`${name} RANK UP! Now Rank ${gameData.confidants[name].rank}`);
+            }
+            
+            // Spending time with confidants costs SP
+            const spCost = prompt(`How much SP did this interaction cost? (10-25 typical)`, '15');
+            if (spCost !== null) {
+                modifySP(-parseInt(spCost) || 0);
+            }
+            
+            updateConfidants();
+            saveData();
+        }
+        
+        // Save notes
+        function saveNotes() {
+            gameData.notes = document.getElementById('daily-notes').value;
+            saveData();
+            alert('Notes saved!');
+        }
+        
+        // Save day and advance to next
+        function saveAndAdvanceDay() {
+            // Save current day's data
+            const dayData = {
+                day: gameData.currentDay,
+                date: gameData.currentDate,
+                sp: gameData.currentSP,
+                maxSP: gameData.maxSP,
+                stats: JSON.parse(JSON.stringify(gameData.stats)),
+                confidants: JSON.parse(JSON.stringify(gameData.confidants)),
+                tasks: JSON.parse(JSON.stringify(gameData.todaysTasks)),
+                recovery: JSON.parse(JSON.stringify(gameData.recovery)),
+                notes: gameData.notes,
+                tasksCompleted: {
+                    main: gameData.todaysTasks.main.filter(t => t.completed).length,
+                    sub: gameData.todaysTasks.sub.filter(t => t.completed).length
+                }
+            };
+            
+            gameData.history.unshift(dayData);
+            if (gameData.history.length > 90) {
+                gameData.history = gameData.history.slice(0, 90);
+            }
+            
+            // Check for arc completions
+            if (gameData.arcs) {
+                gameData.arcs.forEach(arc => {
+                    if (!arc.completed && gameData.currentDay >= arc.deadline) {
+                        // Arc deadline reached - mark as completed or failed based on user input
+                        const completed = confirm(`Arc "${arc.title}" deadline reached. Did you complete it?`);
+                        if (completed) {
+                            arc.completed = true;
+                            arc.completedDay = gameData.currentDay;
+                            gameData.milestones.push({
+                                day: gameData.currentDay,
+                                type: 'arc_complete',
+                                text: `Completed: ${arc.title}`
+                            });
+                        }
+                    }
+                });
+            }
+            
+            // Advance to next day
+            gameData.currentDay++;
+            const nextDate = new Date(gameData.currentDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+            gameData.currentDate = nextDate.toISOString().split('T')[0];
+            
+            // Reset today's data
+            gameData.currentSP = gameData.maxSP;
+            gameData.todaysTasks = { main: [], sub: [] };
+            gameData.recovery = [];
+            gameData.notes = '';
+            
+            saveData();
+            updateDisplay();
+            renderCalendar();
+            renderArcs();
+            
+            alert(`Advanced to Day ${gameData.currentDay}!`);
+        }
+        
+        // Reset day
+        function resetDay() {
+            if (!confirm('Reset today\'s progress?')) return;
+            
+            gameData.currentSP = gameData.maxSP;
+            gameData.todaysTasks = { main: [], sub: [] };
+            gameData.recovery = [];
+            gameData.notes = '';
+            
+            updateDisplay();
+            saveData();
+        }
+        
+        // Render calendar
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            
+            // Get last 30 days
+            const days = [];
+            for (let i = 29; i >= 0; i--) {
+                const dayNum = gameData.currentDay - i;
+                if (dayNum > 0) {
+                    days.push(dayNum);
+                }
+            }
+            
+            days.forEach(dayNum => {
+                const dayData = gameData.history.find(h => h.day === dayNum);
+                const isCurrent = dayNum === gameData.currentDay;
+                
+                const cell = document.createElement('div');
+                cell.className = `calendar-day ${isCurrent ? 'current' : ''} ${dayData ? 'completed' : ''}`;
+                
+                let info = '';
+                if (dayData) {
+                    info = `✓ ${dayData.tasksCompleted.main + dayData.tasksCompleted.sub} tasks`;
+                } else if (isCurrent) {
+                    info = 'Today';
+                }
+                
+                cell.innerHTML = `
+                    <div class="calendar-day-number">D${dayNum}</div>
+                    <div class="calendar-day-info">${info}</div>
+                `;
+                
+                if (dayData) {
+                    cell.onclick = () => viewDayDetails(dayNum);
+                }
+                
+                grid.appendChild(cell);
+            });
+        }
+        
+        // View specific day details
+        function viewDayDetails(dayNum) {
+            const dayData = gameData.history.find(h => h.day === dayNum);
+            if (!dayData) return;
+            
+            const display = document.getElementById('history-display');
+            display.innerHTML = `
+                <div class="history-item">
+                    <div class="history-date">Day ${dayData.day} - ${new Date(dayData.date).toLocaleDateString()}</div>
+                    <div style="margin: 10px 0;">
+                        <strong>Tasks:</strong> ${dayData.tasksCompleted.main} main, ${dayData.tasksCompleted.sub} sub<br>
+                        <strong>Final SP:</strong> ${dayData.sp} / ${dayData.maxSP}
+                    </div>
+                    ${dayData.notes ? `<div style="color: #aaa; margin-top: 10px;"><strong>Notes:</strong><br>${dayData.notes}</div>` : ''}
+                    <div style="margin-top: 15px;">
+                        <strong>Stats that day:</strong><br>
+                        Knowledge Lv${dayData.stats.knowledge.level}, 
+                        Guts Lv${dayData.stats.guts.level}, 
+                        Proficiency Lv${dayData.stats.proficiency.level}, 
+                        Kindness Lv${dayData.stats.kindness.level}, 
+                        Charm Lv${dayData.stats.charm.level}
+                    </div>
+                </div>
+            `;
+        }
+        // View history
+        function viewHistory() {
+            const display = document.getElementById('history-display');
+            display.innerHTML = '';
+            
+            if (gameData.history.length === 0) {
+                display.innerHTML = '<p style="color: #666;">No history yet. Save days to see them here.</p>';
+                return;
+            }
+            
+            display.innerHTML = '<p style="color: #ffff00; margin-bottom: 15px;">Click any calendar day above to view details, or see recent summary below:</p>';
+            
+            gameData.history.slice(0, 7).forEach(day => {
+                const date = new Date(day.date);
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                
+                div.innerHTML = `
+                    <div class="history-date">Day ${day.day} - ${date.toLocaleDateString()}</div>
+                    <div>Main Tasks: ${day.tasksCompleted.main} | Sub Tasks: ${day.tasksCompleted.sub} | Final SP: ${day.sp}</div>
+                    ${day.notes ? `<div style="color: #aaa; margin-top: 5px;">${day.notes}</div>` : ''}
+                `;
+                
+                display.appendChild(div);
+            });
+        }
+        
+        // Add new arc/goal
+        function addArc() {
+            const title = prompt('Arc/Goal title:\n(e.g., "Launch SharkFin prototype", "Reach therapy", "Get CS acceptance")');
+            if (!title) return;
+            
+            const deadlineDays = prompt(`Deadline in how many days from now?\n(Current day: ${gameData.currentDay})`);
+            if (!deadlineDays) return;
+            
+            const deadline = gameData.currentDay + parseInt(deadlineDays);
+            
+            if (!gameData.arcs) gameData.arcs = [];
+            
+            gameData.arcs.push({
+                title,
+                deadline,
+                createdDay: gameData.currentDay,
+                completed: false
+            });
+            
+            saveData();
+            renderArcs();
+            updateCurrentArc();
+        }
+        
+        // Render arcs list
+        function renderArcs() {
+            const list = document.getElementById('arcs-list');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            if (!gameData.arcs || gameData.arcs.length === 0) {
+                list.innerHTML = '<p style="color: #666;">No arcs yet</p>';
+                return;
+            }
+            
+            gameData.arcs.forEach((arc, index) => {
+                const daysLeft = arc.deadline - gameData.currentDay;
+                const isOverdue = daysLeft < 0 && !arc.completed;
+                
+                const div = document.createElement('div');
+                div.className = `arc-item ${arc.completed ? 'completed' : ''}`;
+                
+                div.innerHTML = `
+                    <div class="arc-title">${arc.title}</div>
+                    <div class="arc-deadline">
+                        ${arc.completed ? 
+                            `✓ Completed on Day ${arc.completedDay}` : 
+                            isOverdue ? 
+                                `⚠ ${Math.abs(daysLeft)} days overdue` :
+                                `${daysLeft} days remaining`
+                        }
+                    </div>
+                    ${!arc.completed ? `
+                        <button class="button button-small" onclick="completeArc(${index})" style="margin-top: 5px;">Complete</button>
+                        <button class="button button-small" onclick="deleteArc(${index})">Delete</button>
+                    ` : ''}
+                `;
+                
+                list.appendChild(div);
+            });
+        }
+        
+        // Complete arc
+        function completeArc(index) {
+            gameData.arcs[index].completed = true;
+            gameData.arcs[index].completedDay = gameData.currentDay;
+            
+            if (!gameData.milestones) gameData.milestones = [];
+            gameData.milestones.push({
+                day: gameData.currentDay,
+                type: 'arc_complete',
+                text: `Completed: ${gameData.arcs[index].title}`
+            });
+            
+            alert(`Arc completed! Added to milestones.`);
+            
+            saveData();
+            renderArcs();
+            updateCurrentArc();
+        }
+        
+        // Delete arc
+        function deleteArc(index) {
+            if (!confirm('Delete this arc?')) return;
+            
+            gameData.arcs.splice(index, 1);
+            
+            saveData();
+            renderArcs();
+            updateCurrentArc();
+        }
+        
+        // View stats progression graph
+        function viewStatsGraph() {
+            const display = document.getElementById('progression-display');
+            display.innerHTML = '<div class="panel-title" style="margin-bottom: 20px;">STATS PROGRESSION</div>';
+            
+            const statNames = ['knowledge', 'guts', 'proficiency', 'kindness', 'charm'];
+            const maxLevel = Math.max(...statNames.map(stat => gameData.stats[stat].level));
+            
+            statNames.forEach(stat => {
+                const currentLevel = gameData.stats[stat].level;
+                const percentage = (currentLevel / Math.max(maxLevel, 10)) * 100;
+                
+                const div = document.createElement('div');
+                div.className = 'stat-graph';
+                div.innerHTML = `
+                    <div class="graph-bar">
+                        <div class="graph-label">${stat.toUpperCase()}</div>
+                        <div class="graph-line">
+                            <div class="graph-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div style="margin-left: 10px; color: #ffffff; min-width: 50px;">Lv ${currentLevel}</div>
+                    </div>
+                `;
+                
+                display.appendChild(div);
+            });
+            
+            // Show growth over time
+            if (gameData.history.length > 0) {
+                const firstDay = gameData.history[gameData.history.length - 1];
+                const growth = document.createElement('div');
+                growth.style.marginTop = '20px';
+                growth.style.color = '#00ff00';
+                growth.innerHTML = '<strong>Growth Since Day 1:</strong><br>';
+                
+                statNames.forEach(stat => {
+                    const startLevel = firstDay.stats[stat].level;
+                    const currentLevel = gameData.stats[stat].level;
+                    const gain = currentLevel - startLevel;
+                    if (gain > 0) {
+                        growth.innerHTML += `${stat}: +${gain} levels<br>`;
+                    }
+                });
+                
+                display.appendChild(growth);
+            }
+        }
+        
+        // View confidant timeline
+        function viewConfidantTimeline() {
+            const display = document.getElementById('progression-display');
+            display.innerHTML = '<div class="panel-title" style="margin-bottom: 20px;">CONFIDANT TIMELINE</div>';
+            
+            Object.keys(gameData.confidants).forEach(name => {
+                const rank = gameData.confidants[name].rank;
+                const progress = gameData.confidants[name].progress || 0;
+                
+                const div = document.createElement('div');
+                div.style.marginBottom = '15px';
+                
+                let stars = '';
+                for (let i = 1; i <= 10; i++) {
+                    stars += `<span style="color: ${i <= rank ? '#ffff00' : '#666'}; font-size: 16px;">★</span>`;
+                }
+                
+                div.innerHTML = `
+                    <div style="color: #ffffff; font-weight: bold; margin-bottom: 5px;">${name}</div>
+                    <div style="margin-bottom: 5px;">${stars}</div>
+                    <div style="color: #aaa; font-size: 12px;">Progress to next: ${progress} / 10</div>
+                `;
+                
+                display.appendChild(div);
+            });
+        }
+        
+        // View milestones
+        function viewMilestones() {
+            const display = document.getElementById('progression-display');
+            display.innerHTML = '<div class="panel-title" style="margin-bottom: 20px;">MILESTONES</div>';
+            
+            // Collect all milestone events
+            const milestones = [];
+            
+            // Arc completions
+            if (gameData.milestones) {
+                milestones.push(...gameData.milestones);
+            }
+            
+            // Stat rank-ups from history (we'd need to track these - simplified for now)
+            // Confidant rank-ups from history (we'd need to track these - simplified for now)
+            
+            if (milestones.length === 0) {
+                display.innerHTML += '<p style="color: #666;">No milestones yet. Complete arcs and rank up stats/confidants!</p>';
+                return;
+            }
+            
+            milestones.sort((a, b) => b.day - a.day);
+            
+            milestones.forEach(milestone => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div class="history-date">Day ${milestone.day}</div>
+                    <div>${milestone.text}</div>
+                `;
+                display.appendChild(div);
+            });
+        }
+        
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
