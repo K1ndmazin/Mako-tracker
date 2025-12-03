@@ -1273,6 +1273,7 @@
     <script>
         // Data Structure
         let gameData = {
+            version: 1, // Track data structure version for migrations
             startDate: null, // When tracking started
             currentDay: 1, // Day counter
             currentDate: new Date().toISOString().split('T')[0], // Current date
@@ -1305,11 +1306,70 @@
             milestones: [] // Major moments
         };
         
+        // Migration system for data structure updates
+        function migrateData(data) {
+            // Current version
+            const CURRENT_VERSION = 1;
+            
+            // If no version field, this is version 0 (original)
+            if (!data.version) {
+                console.log('Migrating from v0 to v1...');
+                data.version = 0;
+            }
+            
+            // Apply migrations sequentially
+            if (data.version < 1) {
+                // Migration to v1: Add any new fields that didn't exist
+                if (!data.milestones) data.milestones = [];
+                if (!data.arcs) data.arcs = [];
+                
+                // Ensure all confidants exist
+                const defaultConfidants = {
+                    'Future Therapist': { rank: 0, progress: 0 },
+                    'SharkFin Dev': { rank: 0, progress: 0 },
+                    'SharkFin Artist': { rank: 0, progress: 0 },
+                    'Mom': { rank: 0, progress: 0 },
+                    'Dad': { rank: 0, progress: 0 },
+                    'Step Dad': { rank: 0, progress: 0 },
+                    'Siblings': { rank: 0, progress: 0 }
+                };
+                
+                // Add any missing confidants
+                Object.keys(defaultConfidants).forEach(name => {
+                    if (!data.confidants[name]) {
+                        data.confidants[name] = defaultConfidants[name];
+                    }
+                });
+                
+                // Remove deprecated confidants
+                if (data.confidants['Step Mom']) {
+                    delete data.confidants['Step Mom'];
+                }
+                
+                data.version = 1;
+                console.log('Migrated to v1');
+            }
+            
+            // Future migrations go here
+            // if (data.version < 2) { ... }
+            
+            return data;
+        }
+        
         // Load data from localStorage
         function loadData() {
             const saved = localStorage.getItem('makoLifeTracker');
             if (saved) {
-                gameData = JSON.parse(saved);
+                let loadedData = JSON.parse(saved);
+                
+                // Run migrations
+                loadedData = migrateData(loadedData);
+                
+                // Merge with current gameData to ensure all fields exist
+                gameData = { ...gameData, ...loadedData };
+                
+                // Save migrated data
+                saveData();
             }
             
             // Initialize start date if not set
